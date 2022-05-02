@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS answers;
 DROP TABLE IF EXISTS questions;
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS question_categories;
 DROP TABLE IF EXISTS article_categories;
 DROP TABLE IF EXISTS articles;

@@ -1,111 +1,112 @@
 CREATE TABLE "answers" (
-  "id" int PRIMARY KEY,
+  "id" bigserial PRIMARY KEY,
   "user_id" int UNIQUE NOT NULL,
-  "question_id" int,
-  "title" varchar,
+  "question_id" int NOT NULL,
+  "title" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "article_categories" (
-  "id" int PRIMARY KEY,
-  "name" varchar,
+  "id" bigserial PRIMARY KEY,
+  "name" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "question_categories" (
-  "id" int PRIMARY KEY,
-  "name" varchar,
+  "id" bigserial PRIMARY KEY,
+  "name" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "articles" (
-  "id" int PRIMARY KEY,
-  "title" varchar,
-  "link" varchar,
-  "image" varchar,
+  "id" bigserial PRIMARY KEY,
+  "title" varchar NOT NULL,
+  "link" varchar NOT NULL,
+  "image" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now()),
-  "article_category_id" int
+  "article_category_id" int NOT NULL,
+  "user_id" int UNIQUE NOT NULL
 );
 
 CREATE TABLE "users" (
-  "id" int PRIMARY KEY,
-  "name" varchar,
-  "email" varchar UNIQUE,
+  "id" bigserial PRIMARY KEY,
+  "name" varchar NOT NULL,
+  "email" varchar UNIQUE NOT NULL,
   "hashed_password" varchar NOT NULL,
-  "bio" varchar,
-  "birth" date,
+  "bio" varchar NOT NULL,
+  "birth" date NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now()),
-  "image" varchar
+  "image" varchar NOT NULL
 );
 
 CREATE TABLE "comments" (
-  "id" int PRIMARY KEY,
-  "title" varchar,
+  "id" bigserial PRIMARY KEY,
+  "title" varchar NOT NULL,
   "user_id" int UNIQUE NOT NULL,
-  "answer_id" int,
+  "answer_id" int NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "likes" (
-  "id" int PRIMARY KEY,
+  "id" bigserial PRIMARY KEY,
   "user_id" int UNIQUE NOT NULL,
-  "article_id" int,
+  "article_id" int NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "votes" (
-  "id" int PRIMARY KEY,
+  "id" bigserial PRIMARY KEY,
   "user_id" int UNIQUE NOT NULL,
-  "answer_id" int,
+  "answer_id" int NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "questions" (
-  "id" int PRIMARY KEY,
-  "title" varchar,
+  "id" bigserial PRIMARY KEY,
+  "title" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now()),
   "user_id" int UNIQUE NOT NULL,
-  "question_category_id" int
+  "question_category_id" int NOT NULL
 );
 
 CREATE TABLE "relationships" (
-  "id" int PRIMARY KEY,
-  "follower_id" int,
-  "followed_id" int,
+  "id" bigserial PRIMARY KEY,
+  "follower_id" int NOT NULL,
+  "followed_id" int NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "replies" (
-  "id" int PRIMARY KEY,
-  "title" varchar,
-  "article_id" int,
+  "id" bigserial PRIMARY KEY,
+  "title" varchar NOT NULL,
+  "article_id" int NOT NULL,
   "user_id" int UNIQUE NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "user_article_relationships" (
-  "id" int PRIMARY KEY,
-  "follower_id" int,
-  "followed_id" int,
+  "id" bigserial PRIMARY KEY,
+  "follower_id" int NOT NULL,
+  "followed_id" int NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "user_question_relations" (
-  "id" int PRIMARY KEY,
-  "follower_id" int,
-  "followed_id" int,
+  "id" bigserial PRIMARY KEY,
+  "follower_id" int NOT NULL,
+  "followed_id" int NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
@@ -137,6 +138,8 @@ CREATE UNIQUE INDEX "index_user_question_relations_on_follower_id_and_followed_i
 CREATE INDEX "index_user_question_relations_on_follower_id" ON "user_question_relations" ("follower_id");
 
 ALTER TABLE "answers" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "articles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
 ALTER TABLE "comments" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
