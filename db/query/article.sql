@@ -7,8 +7,10 @@ INSERT INTO Articles (
 RETURNING *;
 
 -- name: GetArticle :one
-SELECT * FROM articles
-WHERE id = $1 LIMIT 1;
+SELECT * 
+FROM articles
+WHERE id = $1 
+LIMIT 1;
 
 -- name: ListArticles :many
 SELECT * FROM articles

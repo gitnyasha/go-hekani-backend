@@ -16,10 +16,11 @@ ORDER BY id
 LIMIT $1
 OFFSET $2;
 
--- name: UpdateQuestionCategory :exec
+-- name: UpdateQuestionCategory :one
 UPDATE question_categories
 SET name = $1, updated_at = NOW()
-WHERE id = $2;
+WHERE id = $2
+RETURNING *;
 
 -- name: DeleteQuestionCategory :exec
 DELETE FROM question_categories

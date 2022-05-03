@@ -15,8 +15,9 @@ INSERT INTO article_categories (
 )
 RETURNING id, name, created_at, updated_at
 `
+
 type CreateArticleCategoryParams struct {
-	Name      string `json:"name"`
+	Name  string `json:"name"`
 }
 
 func (q *Queries) CreateArticleCategory(ctx context.Context, arg CreateArticleCategoryParams) (ArticleCategory, error) {
@@ -98,10 +99,11 @@ func (q *Queries) ListArticleCategories(ctx context.Context, arg ListArticleCate
 	return items, nil
 }
 
-const updateArticleCategory = `-- name: UpdateArticleCategory :exec
+const updateArticleCategory = `-- name: UpdateArticleCategory :one
 UPDATE article_categories
 SET name = $1, updated_at = NOW()
 WHERE id = $2
+RETURNING id, name, created_at, updated_at
 `
 
 type UpdateArticleCategoryParams struct {
@@ -109,7 +111,14 @@ type UpdateArticleCategoryParams struct {
 	ID   int64  `json:"id"`
 }
 
-func (q *Queries) UpdateArticleCategory(ctx context.Context, arg UpdateArticleCategoryParams) error {
-	_, err := q.db.ExecContext(ctx, updateArticleCategory, arg.Name, arg.ID)
-	return err
+func (q *Queries) UpdateArticleCategory(ctx context.Context, arg UpdateArticleCategoryParams) (ArticleCategory, error) {
+	row := q.db.QueryRowContext(ctx, updateArticleCategory, arg.Name, arg.ID)
+	var i ArticleCategory
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

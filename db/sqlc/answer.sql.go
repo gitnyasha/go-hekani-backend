@@ -107,10 +107,11 @@ func (q *Queries) ListAnswers(ctx context.Context, arg ListAnswersParams) ([]Ans
 	return items, nil
 }
 
-const updateAnswer = `-- name: UpdateAnswer :exec
+const updateAnswer = `-- name: UpdateAnswer :one
 UPDATE answers
 SET title = $1, updated_at = NOW()
 WHERE id = $2
+RETURNING id, user_id, question_id, title, created_at, updated_at
 `
 
 type UpdateAnswerParams struct {
@@ -118,7 +119,16 @@ type UpdateAnswerParams struct {
 	ID    int64  `json:"id"`
 }
 
-func (q *Queries) UpdateAnswer(ctx context.Context, arg UpdateAnswerParams) error {
-	_, err := q.db.ExecContext(ctx, updateAnswer, arg.Title, arg.ID)
-	return err
+func (q *Queries) UpdateAnswer(ctx context.Context, arg UpdateAnswerParams) (Answer, error) {
+	row := q.db.QueryRowContext(ctx, updateAnswer, arg.Title, arg.ID)
+	var i Answer
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.QuestionID,
+		&i.Title,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

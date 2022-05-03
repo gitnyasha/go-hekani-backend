@@ -16,10 +16,11 @@ ORDER BY id
 LIMIT $1
 OFFSET $2;
 
--- name: UpdateUser :exec
+-- name: UpdateUser :one
 UPDATE users
 SET name = $1, bio = $2, birth = $3, updated_at = NOW()
-WHERE id = $4;
+WHERE id = $4
+RETURNING *;
 
 -- name: DeleteUser :exec
 DELETE FROM users

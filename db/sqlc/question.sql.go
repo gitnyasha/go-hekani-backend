@@ -107,10 +107,11 @@ func (q *Queries) ListQuestions(ctx context.Context, arg ListQuestionsParams) ([
 	return items, nil
 }
 
-const updateQuestion = `-- name: UpdateQuestion :exec
+const updateQuestion = `-- name: UpdateQuestion :one
 UPDATE questions
 SET title = $1, updated_at = NOW()
 WHERE id = $2
+RETURNING id, title, created_at, updated_at, user_id, question_category_id
 `
 
 type UpdateQuestionParams struct {
@@ -118,7 +119,16 @@ type UpdateQuestionParams struct {
 	ID    int64  `json:"id"`
 }
 
-func (q *Queries) UpdateQuestion(ctx context.Context, arg UpdateQuestionParams) error {
-	_, err := q.db.ExecContext(ctx, updateQuestion, arg.Title, arg.ID)
-	return err
+func (q *Queries) UpdateQuestion(ctx context.Context, arg UpdateQuestionParams) (Question, error) {
+	row := q.db.QueryRowContext(ctx, updateQuestion, arg.Title, arg.ID)
+	var i Question
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.UserID,
+		&i.QuestionCategoryID,
+	)
+	return i, err
 }

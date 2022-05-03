@@ -16,8 +16,12 @@ INSERT INTO question_categories (
 RETURNING id, name, created_at, updated_at
 `
 
-func (q *Queries) CreateQuestionCategory(ctx context.Context, name string) (QuestionCategory, error) {
-	row := q.db.QueryRowContext(ctx, createQuestionCategory, name)
+type CreateQuestionCategoryParams struct {
+	Name  string `json:"name"`
+}
+
+func (q *Queries) CreateQuestionCategory(ctx context.Context, arg CreateQuestionCategoryParams) (QuestionCategory, error) {
+	row := q.db.QueryRowContext(ctx, createQuestionCategory, arg.Name)
 	var i QuestionCategory
 	err := row.Scan(
 		&i.ID,
@@ -95,10 +99,11 @@ func (q *Queries) ListQuestionCategories(ctx context.Context, arg ListQuestionCa
 	return items, nil
 }
 
-const updateQuestionCategory = `-- name: UpdateQuestionCategory :exec
+const updateQuestionCategory = `-- name: UpdateQuestionCategory :one
 UPDATE question_categories
 SET name = $1, updated_at = NOW()
 WHERE id = $2
+RETURNING id, name, created_at, updated_at
 `
 
 type UpdateQuestionCategoryParams struct {
@@ -106,7 +111,14 @@ type UpdateQuestionCategoryParams struct {
 	ID   int64  `json:"id"`
 }
 
-func (q *Queries) UpdateQuestionCategory(ctx context.Context, arg UpdateQuestionCategoryParams) error {
-	_, err := q.db.ExecContext(ctx, updateQuestionCategory, arg.Name, arg.ID)
-	return err
+func (q *Queries) UpdateQuestionCategory(ctx context.Context, arg UpdateQuestionCategoryParams) (QuestionCategory, error) {
+	row := q.db.QueryRowContext(ctx, updateQuestionCategory, arg.Name, arg.ID)
+	var i QuestionCategory
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

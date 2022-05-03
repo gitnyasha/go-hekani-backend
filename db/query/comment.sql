@@ -16,10 +16,11 @@ ORDER BY id
 LIMIT $1
 OFFSET $2;
 
--- name: UpdateComment :exec
+-- name: UpdateComment :one
 UPDATE comments
 SET title = $1, updated_at = NOW()
-WHERE id = $2;
+WHERE id = $2
+RETURNING *;
 
 -- name: DeleteComment :exec
 DELETE FROM comments

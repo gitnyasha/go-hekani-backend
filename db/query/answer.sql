@@ -16,10 +16,11 @@ ORDER BY id
 LIMIT $1
 OFFSET $2;
 
--- name: UpdateAnswer :exec
+-- name: UpdateAnswer :one
 UPDATE answers
 SET title = $1, updated_at = NOW()
-WHERE id = $2;
+WHERE id = $2
+RETURNING *;
 
 -- name: DeleteAnswer :exec
 DELETE FROM answers

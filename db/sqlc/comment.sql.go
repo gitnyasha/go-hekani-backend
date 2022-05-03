@@ -107,10 +107,11 @@ func (q *Queries) ListComments(ctx context.Context, arg ListCommentsParams) ([]C
 	return items, nil
 }
 
-const updateComment = `-- name: UpdateComment :exec
+const updateComment = `-- name: UpdateComment :one
 UPDATE comments
 SET title = $1, updated_at = NOW()
 WHERE id = $2
+RETURNING id, title, user_id, answer_id, created_at, updated_at
 `
 
 type UpdateCommentParams struct {
@@ -118,7 +119,16 @@ type UpdateCommentParams struct {
 	ID    int64  `json:"id"`
 }
 
-func (q *Queries) UpdateComment(ctx context.Context, arg UpdateCommentParams) error {
-	_, err := q.db.ExecContext(ctx, updateComment, arg.Title, arg.ID)
-	return err
+func (q *Queries) UpdateComment(ctx context.Context, arg UpdateCommentParams) (Comment, error) {
+	row := q.db.QueryRowContext(ctx, updateComment, arg.Title, arg.ID)
+	var i Comment
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.UserID,
+		&i.AnswerID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
