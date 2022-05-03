@@ -57,8 +57,10 @@ func (q *Queries) DeleteArticle(ctx context.Context, id int64) error {
 }
 
 const getArticle = `-- name: GetArticle :one
-SELECT id, title, link, image, created_at, updated_at, article_category_id, user_id FROM articles
-WHERE id = $1 LIMIT 1
+SELECT id, title, link, image, created_at, updated_at, article_category_id, user_id 
+FROM articles
+WHERE id = $1 
+LIMIT 1
 `
 
 func (q *Queries) GetArticle(ctx context.Context, id int64) (Article, error) {
