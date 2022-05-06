@@ -77,7 +77,7 @@ func (q *Queries) ListQuestionCategories(ctx context.Context, arg ListQuestionCa
 		return nil, err
 	}
 	defer rows.Close()
-	var items []QuestionCategory
+	items := []QuestionCategory{}
 	for rows.Next() {
 		var i QuestionCategory
 		if err := rows.Scan(

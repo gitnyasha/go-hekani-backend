@@ -83,7 +83,7 @@ func (q *Queries) ListReplies(ctx context.Context, arg ListRepliesParams) ([]Rep
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Reply
+	items := []Reply{}
 	for rows.Next() {
 		var i Reply
 		if err := rows.Scan(

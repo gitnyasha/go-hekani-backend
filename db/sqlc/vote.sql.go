@@ -55,7 +55,7 @@ func (q *Queries) GetVotes(ctx context.Context, answerID int32) ([]Vote, error) 
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Vote
+	items := []Vote{}
 	for rows.Next() {
 		var i Vote
 		if err := rows.Scan(

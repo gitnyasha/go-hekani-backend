@@ -55,7 +55,7 @@ func (q *Queries) GetLikes(ctx context.Context, articleID int32) ([]Like, error)
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Like
+	items := []Like{}
 	for rows.Next() {
 		var i Like
 		if err := rows.Scan(
