@@ -42,6 +42,7 @@ type Querier interface {
 	GetQuestionCategory(ctx context.Context, id int64) (QuestionCategory, error)
 	GetReply(ctx context.Context, id int64) (Reply, error)
 	GetUser(ctx context.Context, id int64) (User, error)
+	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetVotes(ctx context.Context, answerID int32) ([]Vote, error)
 	ListAnswers(ctx context.Context, arg ListAnswersParams) ([]Answer, error)
 	ListArticleCategories(ctx context.Context, arg ListArticleCategoriesParams) ([]ArticleCategory, error)
