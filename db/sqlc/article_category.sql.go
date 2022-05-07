@@ -16,12 +16,8 @@ INSERT INTO article_categories (
 RETURNING id, name, created_at, updated_at
 `
 
-type CreateArticleCategoryParams struct {
-	Name  string `json:"name"`
-}
-
-func (q *Queries) CreateArticleCategory(ctx context.Context, arg CreateArticleCategoryParams) (ArticleCategory, error) {
-	row := q.db.QueryRowContext(ctx, createArticleCategory, arg.Name)
+func (q *Queries) CreateArticleCategory(ctx context.Context, name string) (ArticleCategory, error) {
+	row := q.db.QueryRowContext(ctx, createArticleCategory, name)
 	var i ArticleCategory
 	err := row.Scan(
 		&i.ID,

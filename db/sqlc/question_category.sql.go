@@ -16,12 +16,8 @@ INSERT INTO question_categories (
 RETURNING id, name, created_at, updated_at
 `
 
-type CreateQuestionCategoryParams struct {
-	Name  string `json:"name"`
-}
-
-func (q *Queries) CreateQuestionCategory(ctx context.Context, arg CreateQuestionCategoryParams) (QuestionCategory, error) {
-	row := q.db.QueryRowContext(ctx, createQuestionCategory, arg.Name)
+func (q *Queries) CreateQuestionCategory(ctx context.Context, name string) (QuestionCategory, error) {
+	row := q.db.QueryRowContext(ctx, createQuestionCategory, name)
 	var i QuestionCategory
 	err := row.Scan(
 		&i.ID,

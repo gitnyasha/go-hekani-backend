@@ -11,15 +11,12 @@ import (
 )
 
 func createRandomQuestionCategory(t *testing.T) QuestionCategory {
-	arg := CreateQuestionCategoryParams{
-		Name: util.RandomString(),
-	}
-
-	question_category, err := testQueries.CreateQuestionCategory(context.Background(), arg)
+	title := util.RandomString()
+	question_category, err := testQueries.CreateQuestionCategory(context.Background(), title)
 	require.NoError(t, err)
 	require.NotEmpty(t, question_category)
 
-	require.Equal(t, arg.Name, question_category.Name)
+	require.Equal(t, title, question_category.Name)
 
 	require.NotZero(t, question_category.ID)
 	require.NotZero(t, question_category.CreatedAt)
